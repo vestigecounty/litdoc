@@ -1,0 +1,42 @@
+// The ui-variables file is provided by base themes provided by Atom.
+//
+// See https://github.com/atom/atom-dark-ui/blob/master/styles/ui-variables.less
+// for a full listing of what's available.
+@import "ui-variables";
+
+atom-text-editor .gutter[gutter-name="litdoc"] {
+  width: 280px;
+  color: @text-color-subtle;
+  text-align: left;
+  font-family: sans-serif;
+  cursor: text;
+
+  img {
+    background-color: none;
+    max-width: 280px;
+    -webkit-filter: grayscale(1);
+    -webkit-transition : -webkit-filter 0.25s linear, opacity 0.25s linear;
+  }
+
+  div.litdoc
+  {
+    min-width: 10px;
+  }
+}
+
+atom-text-editor .gutter[gutter-name="litdoc"]:hover {
+  img {
+    -webkit-filter: none;
+    -webkit-transition : -webkit-filter 0.25s linear, opacity 0.25s linear;
+  }
+}
+
+atom-text-editor .gutter[gutter-name="linter-ui-default"] .line-number.cursor-line {
+  background: none;
+}
+
+// .litdoc
+// Line 14: Make images grayscale
+// Line 23: Enough to fit the blinking cursor
+// Line 28: Disable grayscale on hover
+// Line 34: Suppress cursor line highlight on linter gutter, which is shown to the right of litdoc

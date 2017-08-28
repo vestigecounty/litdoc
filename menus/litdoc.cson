@@ -1,0 +1,16 @@
+# See https://atom.io/docs/latest/hacking-atom-package-word-count#menus for more details
+'context-menu':
+  'atom-text-editor': [
+    {
+      'label': 'Toggle litdoc in active editor'
+      'command': 'litdoc:toggle'
+    },
+    {
+      'label': 'Disable litdoc in active editor'
+      'command': 'litdoc:disable'
+    },
+    {
+      'label': 'Deactivate litdoc in current session'
+      'command': 'litdoc:deactivate'
+    }
+  ]

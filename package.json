@@ -1,0 +1,16 @@
+{
+  "name": "litdoc",
+  "main": "./lib/init",
+  "version": "0.1.0",
+  "description": "Side-by-side documentation for literate programming",
+  "keywords": [
+  ],
+  "repository": "https://github.com/atom/litdoc",
+  "license": "MIT",
+  "engines": {
+    "atom": ">=1.0.0 <2.0.0"
+  },
+  "dependencies": {
+    "xregexp": "*"
+  }
+}
