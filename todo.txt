@@ -1,3 +1,2 @@
 - cut and paste litdocs when surrounding lines are cut and pasted
 - restore markers when undo is done
-- undo should not undo the litdoc block insertion

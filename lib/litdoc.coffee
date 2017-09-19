@@ -142,9 +142,9 @@ class Litdoc
     textBuffer.backwardsScan @getLitdocTagRegex(), (match) ->
       range = match.range
       range.end = textBuffer.getEndPosition()
-      textBuffer.delete range
+      textBuffer.setTextInRange range, '', undo: 'skip'
 
-    textBuffer.append "\n" + @getLitdocTag()
+    textBuffer.append "\n" + @getLitdocTag(), undo: 'skip'
     foldStart = textBuffer.getEndPosition()
 
     for marker in markers
@@ -154,6 +154,8 @@ class Litdoc
       textBuffer.append "\n" + @getCommentLiteral() +
                         "Line #{lineNumPlus1}: " + marker.getProperties().item.innerHTML,
                         undo: 'skip'
+
+    textBuffer.append "\n", undo: 'skip'
 
     @foldRange [ foldStart, textBuffer.getEndPosition() ]
 
@@ -202,12 +204,14 @@ module.exports = Litdoc
 # Line 135: Save litdoc comments in the edited file
 # Line 138: Find all litdoc markers
 # Line 142: Find and remove old litdoc block
+# Line 145: Use setTextInRange rathen than delete, since delete doesn't allow to skip undo
 # Line 147: Insert litdoc tag
 # Line 150: Serialize litdoc comments
 # Line 152: Buffer line numbers are zero-based, add +1 for a human-readable number
 # Line 154: Append the line in the format<div><i>Line xxx: comment</i>&nbsp; to the end of the file</div>
-# Line 158: Fold inserted lines and restore selection
-# Line 160: Unimplemented
-# Line 163: Remove all markers
-# Line 165: Remove gutter
-# Line 166: Remove editor.onWillSave subscription
+# Line 158: Insert newline at the end of file (or atom will insert it itself, with undo)
+# Line 160: Fold inserted lines and restore selection
+# Line 162: Unimplemented
+# Line 165: Remove all markers
+# Line 167: Remove gutter
+# Line 168: Remove editor.onWillSave subscription
