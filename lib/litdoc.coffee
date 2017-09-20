@@ -87,19 +87,19 @@ class Litdoc
     clickedBufferRow = @editor.bufferRowForScreenRow( clickedScreenRow )
     clickedBufferRow
 
-  getCommentLiteral: ->
-    scope = @editor.getRootScopeDescriptor()
+  @getCommentLiteral: (editor) ->
+    scope = editor.getRootScopeDescriptor()
     atom.config.get( 'editor.commentStart', { scope } )
 
-  getLitdocTag: ->
-    "#{@getCommentLiteral()}.litdoc"
+  @getLitdocTag: (editor) ->
+    "#{@getCommentLiteral( editor )}.litdoc"
 
-  getLitdocTagRegex: ->
+  @getLitdocTagRegex: (editor) ->
     new XRegExp( "^ \\n?
-                  ^ #{ XRegExp.escape( @getLitdocTag() ) } \s* $", 'xgm' )
+                  ^ #{ XRegExp.escape( @getLitdocTag( editor ) ) } \s* $", 'xgm' )
 
   getLineRegex: ->
-    new XRegExp( "^ #{ XRegExp.escape( @getCommentLiteral() ) }
+    new XRegExp( "^ #{ XRegExp.escape( Litdoc.getCommentLiteral( @editor ) ) }
                   Line\\ (?<lineNum> \\d+ ):\\ (?<content> .+$ )", 'xgm' )
 
   foldRange: (range) ->
@@ -108,16 +108,18 @@ class Litdoc
     @editor.foldSelectedLines()
     @editor.setSelectedBufferRange selectedRange
 
-
+  @detect: (editor, callback) ->
+    editor.getBuffer().backwardsScan @getLitdocTagRegex( editor ), =>
+      callback()
 
 
 
 
   deserializeFromText: ->
-    litdocTag = @getLitdocTag()
+    litdocTag = Litdoc.getLitdocTag( @editor )
     textBuffer = @editor.getBuffer()
 
-    textBuffer.backwardsScan @getLitdocTagRegex(), (match) =>
+    textBuffer.backwardsScan Litdoc.getLitdocTagRegex( @editor ), (match) =>
       range = match.range
       range.end = textBuffer.getEndPosition()
 
@@ -139,19 +141,19 @@ class Litdoc
 
     return if markers.length == 0
 
-    textBuffer.backwardsScan @getLitdocTagRegex(), (match) ->
+    textBuffer.backwardsScan Litdoc.getLitdocTagRegex( @editor ), (match) ->
       range = match.range
       range.end = textBuffer.getEndPosition()
       textBuffer.setTextInRange range, '', undo: 'skip'
 
-    textBuffer.append "\n" + @getLitdocTag(), undo: 'skip'
+    textBuffer.append "\n" + Litdoc.getLitdocTag( @editor ), undo: 'skip'
     foldStart = textBuffer.getEndPosition()
 
     for marker in markers
       lineNum = marker.getBufferRange().start.row
       lineNumPlus1 = ( Number.parseInt( lineNum ) + 1 ).toString()
 
-      textBuffer.append "\n" + @getCommentLiteral() +
+      textBuffer.append "\n" + Litdoc.getCommentLiteral( @editor ) +
                         "Line #{lineNumPlus1}: " + marker.getProperties().item.innerHTML,
                         undo: 'skip'
 
@@ -169,6 +171,7 @@ class Litdoc
 
 
 module.exports = Litdoc
+
 
 # .litdoc
 # Line 8: <span style="color: hsl(100,30%,50%)">Setup</span>
@@ -196,22 +199,19 @@ module.exports = Litdoc
 # Line 104: <li>the word <i>Line </i>followed by a number</li>
 # Line 105: <li>arbitrary content</li>
 # Line 107: Fold the lines in the range. &nbsp;This allows folding arbitrary blocks, such as the whole litdoc block
-# Line 114: <span style="color: hsl(100,30%,50%)">Loading and saving</span>
-# Line 116: Load litdoc comments from the edited file
-# Line 120: Find and read litdoc block at the end of the file
-# Line 124: Fold litdoc block content except the first line
-# Line 128: Deserialize comments for each line in the block
-# Line 135: Save litdoc comments in the edited file
-# Line 138: Find all litdoc markers
-# Line 142: Find and remove old litdoc block
-# Line 145: Use setTextInRange rathen than delete, since delete doesn't allow to skip undo
-# Line 147: Insert litdoc tag
-# Line 150: Serialize litdoc comments
-# Line 152: Buffer line numbers are zero-based, add +1 for a human-readable number
-# Line 154: Append the line in the format<div><i>Line xxx: comment</i>&nbsp; to the end of the file</div>
-# Line 158: Insert newline at the end of file (or atom will insert it itself, with undo)
-# Line 160: Fold inserted lines and restore selection
-# Line 162: Unimplemented
-# Line 165: Remove all markers
-# Line 167: Remove gutter
-# Line 168: Remove editor.onWillSave subscription
+# Line 111: Detect litdoc tag in the editor, and call the callback function in that case
+# Line 116: <span style="color: hsl(100,30%,50%)">Loading and saving</span>
+# Line 118: Load litdoc comments from the edited file
+# Line 122: Find and read litdoc block at the end of the file
+# Line 126: Fold litdoc block content except the first line
+# Line 130: Deserialize comments for each line in the block
+# Line 137: Save litdoc comments in the edited file
+# Line 140: Find all litdoc markers
+# Line 144: Find and remove old litdoc block
+# Line 147: Use setTextInRange rathen than delete, since delete doesn't allow to skip undo
+# Line 149: Insert litdoc tag
+# Line 152: Serialize litdoc comments
+# Line 154: Buffer line numbers are zero-based, add +1 for a human-readable number
+# Line 156: Append the line in the format<div><i>Line xxx: comment</i>&nbsp; to the end of the file</div>
+# Line 160: Insert newline at the end of file (or atom will insert it itself, with undo)
+# Line 162: Fold inserted lines and restore selection
