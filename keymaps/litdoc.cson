@@ -9,16 +9,3 @@
 # https://atom.io/docs/latest/behind-atom-keymaps-in-depth
 'atom-workspace':
   'alt-cmd-l': 'litdoc:toggle'
-
-'div.litdoc':
-  'cmd-c': 'native!'
-  'cmd-v': 'native!'
-  'cmd-z': 'native!'
-
-#'atom-text-editor.litdoc':
-#  'cmd-c': 'unset!'
-#  'cmd-v': 'unset!'
-#  'cmd-z': 'unset!'
-
-# .litdoc
-# Line 18: Disable copy-paste and undo hotkeys, since they are not yet handled properly
